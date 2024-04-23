@@ -6,6 +6,9 @@ const app = express();
 
 const PORT = 3000;
 
+// Middleware
+app.use(express.json());
+
 // Connect mongodb
 
 mongoose
@@ -17,9 +20,6 @@ mongoose
     console.log("Error connecting to mongodb:", err);
     process.exit(1);
   });
-
-// Middleware
-app.use(express.json());
 
 // Routes
 app.use("/", newsRoutes);
@@ -33,3 +33,27 @@ app.use((err, req, res, next) => {
 app.listen(PORT, () => {
   console.log(`Server is running on port http://localhost:${PORT}`);
 });
+
+const db = mongoose.connection;
+async function clearDatabase() {
+  try {
+    // Get list of all collection names
+    const collections = await db.listCollections();
+
+    // Iterate over each collection and drop it
+    for (const collection of collections) {
+      await db.collection(collection.name).drop();
+      console.log(`Dropped collection: ${collection.name}`);
+    }
+
+    console.log("All collections dropped successfully");
+  } catch (error) {
+    console.error("Error dropping collections:", error);
+  } finally {
+    // Close the connection after dropping collections
+    await mongoose.connection.close();
+    console.log("MongoDB connection closed");
+  }
+}
+
+// clearDatabase();
