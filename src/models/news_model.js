@@ -6,13 +6,14 @@ const newsSchema = new mongoose.Schema({
     required: false,
   },
   img: {
-    data:Buffer,
-    contentType: String,
+    type: String,
+    required: false,
+    default: null,
   },
 
   content: { type: String, required: false },
 
-  type: { type: String, required: true, default: "local", unique: true },
+  type: { type: String, required: true, default: "local", unique: false },
 
   created_at: { type: Date, required: true, default: Date.now },
 });

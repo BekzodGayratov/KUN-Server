@@ -1,6 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const newsRoutes = require("./src/routes/news_route");
+const fileRoutes = require("./src/routes/file_route");
 
 const app = express();
 
@@ -23,6 +24,7 @@ mongoose
 
 // Routes
 app.use("/", newsRoutes);
+app.use("/file", fileRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
