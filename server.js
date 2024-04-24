@@ -31,7 +31,7 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.log(err);
-  res.status(500).send("Something went wrong!");
+  res.status(500).send({ error: "Something went wrong" });
 });
 
 app.listen(PORT, () => {

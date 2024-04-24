@@ -1,11 +1,22 @@
 const News = require("../models/news_model");
+const newsTypes = require("../utils/news_types");
+const mongoose = require("mongoose");
 
 const newController = {
-  getNewsByType: async (req, res, next) => {
+  getNews: async (req, res, next) => {
     try {
-      const newsType = req.query.type;
-      const news = await News.find({ type: newsType });
-      res.status(200).json(news);
+      let query = {};
+      if (req.query.type !== undefined) {
+        query["type.id"] = req.query.type;
+      }
+
+      // If user provides a type parameter, add it to the query
+      const news = await News.find(query);
+
+      res.status(200).json({
+        count: news.length,
+        data: news,
+      });
     } catch (err) {
       next(err);
     }
@@ -19,14 +30,21 @@ const newController = {
 
       if (!title || !type) {
         return res.status(400).json({
-          message: "Title, content, and type fields are not provided",
+          error: "Title, content, and type fields are not provided",
         });
       }
+
+      if (!newsTypes.newsTypes.map((t) => t.id).some((x) => x === type)) {
+        return res.status(400).json({
+          error: "type is not specified",
+        });
+      }
+
       const newNews = new News({
         title: title,
         subtitle: subtitle,
         content: content,
-        type: type,
+        type: newsTypes.getNewsTypeById(type),
         img: {
           url: img ? img.url : null,
           caption: img ? img.caption : null,

@@ -13,8 +13,6 @@ const newsSchema = new mongoose.Schema({
   img: {
     url: { type: String, required: false, default: null },
     caption: { type: String, required: false, default: null },
-    required: false,
-    default: null,
   },
 
   content: { type: String, required: false },
@@ -28,11 +26,10 @@ const newsSchema = new mongoose.Schema({
       type: String,
       required: true,
     },
-
-    required: true,
   },
 
   created_at: { type: Date, required: true, default: Date.now },
+  read_count: { type: Number, required: true, default: 0 },
 });
 
 const News = mongoose.model("News", newsSchema);
