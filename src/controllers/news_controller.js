@@ -13,14 +13,24 @@ const newController = {
 
   createsNews: async (req, res, next) => {
     try {
-      const { title, content, type } = req.body;
+      const { title, content, subtitle, type } = req.body;
 
       let img = req.body.img ? req.body.img : null;
+
+      if (!title || !type) {
+        return res.status(400).json({
+          message: "Title, content, and type fields are not provided",
+        });
+      }
       const newNews = new News({
         title: title,
+        subtitle: subtitle,
         content: content,
         type: type,
-        img: img,
+        img: {
+          url: img ? img.url : null,
+          caption: img ? img.caption : null,
+        },
       });
       await newNews.save();
       res.status(201).json(newNews);
