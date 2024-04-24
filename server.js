@@ -2,9 +2,10 @@ const express = require("express");
 const mongoose = require("mongoose");
 const newsRoutes = require("./src/routes/news_route");
 const fileRoutes = require("./src/routes/file_route");
+const path = require("path");
+const fs = require("fs-extra");
 
 const app = express();
-
 const PORT = 3000;
 
 // Middleware
@@ -25,6 +26,7 @@ mongoose
 // Routes
 app.use("/", newsRoutes);
 app.use("/file", fileRoutes);
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Error handling middleware
 app.use((err, req, res, next) => {
@@ -57,5 +59,17 @@ async function clearDatabase() {
     console.log("MongoDB connection closed");
   }
 }
-
 // clearDatabase();
+
+const createUploadsDirectory = () => {
+  const uploadsDir = path.join(__dirname, "uploads");
+  if (!fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir);
+    console.log("Uploads directory created:", uploadsDir);
+  } else {
+    console.log("Uploads directory already exists:", uploadsDir);
+  }
+};
+
+// Call the function to create the uploads directory
+createUploadsDirectory();

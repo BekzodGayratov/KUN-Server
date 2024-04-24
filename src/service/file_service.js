@@ -1,6 +1,7 @@
 const multer = require("multer");
 const path = require("path");
 
+
 // Set up storage for multer
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -29,7 +30,7 @@ exports.getFileReference = (req, res) => {
     }
     const filename = req.file.filename;
     const fileReference = "/uploads/" + filename; // Adjust as needed based on your server setup
-    res.status(200).json({ fileReference: fileReference });
+    res.status(200).json({ id: fileReference });
   } catch (error) {
     console.error("Error uploading file:", error);
     res.status(500).json({ error: "Failed to upload file" });
