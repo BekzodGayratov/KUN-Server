@@ -13,10 +13,12 @@ const newController = {
       // If user provides a type parameter, add it to the query
       const news = await News.find(query);
 
-      res.status(200).json({
-        count: news.length,
-        data: news,
-      });
+      setTimeout(() => {
+        res.status(200).json({
+          count: news.length,
+          data: news,
+        });
+      }, 1000);
     } catch (err) {
       next(err);
     }

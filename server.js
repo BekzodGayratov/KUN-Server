@@ -5,6 +5,29 @@ const fileRoutes = require("./src/routes/file_route");
 const path = require("path");
 const fs = require("fs-extra");
 
+//Swagger
+const swaggerUi = require("swagger-ui-express");
+const swaggerJsDoc = require("swagger-jsdoc");
+
+const options = {
+  definition: {
+    openapi: "3.0.0",
+    info: {
+      title: "News API",
+      version: "1.0.0",
+      description: "News API",
+    },
+    servers: [
+      {
+        url: "http://localhost:3000",
+      },
+    ],
+  },
+  apis: [path.join(__dirname, "./src/public/*js")],
+};
+
+const swaggerSpec = swaggerJsDoc(options);
+
 const app = express();
 const PORT = 3000;
 
@@ -22,6 +45,9 @@ mongoose
     console.log("Error connecting to mongodb:", err);
     process.exit(1);
   });
+
+// Serve Swagger UI at /api-docs route
+app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Routes
 app.use("/", newsRoutes);
@@ -61,12 +87,32 @@ async function clearDatabase() {
 }
 // clearDatabase();
 
-const createUploadsDirectory = () => {
-  const uploadsDir = path.join(__dirname, "uploads");
-  if (!fs.existsSync(uploadsDir)) {
-    fs.mkdirSync(uploadsDir);
+const createMediaDirectory = () => {
+  const mediaDir = path.join(__dirname, "media");
+  const imagesDir = path.join(mediaDir, "images");
+  const videosDir = path.join(mediaDir, "videos");
+
+  try {
+    // Create the parent directory if it doesn't exist
+    if (!fs.existsSync(mediaDir)) {
+      fs.mkdirSync(mediaDir, { recursive: true });
+    }
+
+    // Create the images directory if it doesn't exist
+    if (!fs.existsSync(imagesDir)) {
+      fs.mkdirSync(imagesDir);
+    }
+
+    // Create the videos directory if it doesn't exist
+    if (!fs.existsSync(videosDir)) {
+      fs.mkdirSync(videosDir);
+    }
+
+    console.log("Media directories created successfully.");
+  } catch (err) {
+    console.error("Error creating media directories:", err);
   }
 };
 
 // Call the function to create the uploads directory
-createUploadsDirectory();
+createMediaDirectory();
